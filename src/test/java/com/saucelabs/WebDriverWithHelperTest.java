@@ -1,5 +1,6 @@
 package com.saucelabs;
 
+import com.saucelabs.Pages.spectoryPage;
 import com.saucelabs.common.SauceOnDemandAuthentication;
 import com.saucelabs.common.SauceOnDemandSessionIdProvider;
 import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
@@ -12,10 +13,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
+import org.openqa.selenium.support.PageFactory;
+import org.testng.Assert;
 import org.testng.annotations.*;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import static org.testng.Assert.assertEquals;
 
@@ -31,7 +35,16 @@ import static org.testng.Assert.assertEquals;
 @Listeners({SauceOnDemandTestListener.class})
 public class WebDriverWithHelperTest implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 
+    //for positive
+    public static String name = "User1";
+    public static String eAddress = "dwash@yopmail.com";
+    public static String pNumber = "0541234567";
+    public static String tAboutProject = "It`s my project";
+    //for negative
+    public static String eAddress_false = "dwashyopmail";
+    public static String pNumber_false = "abcdD!@#$%^&*()";
     public SauceOnDemandAuthentication authentication;
+    public spectoryPage SpectoryPage;
     private boolean acceptNextAlert = true;
     private StringBuffer verificationErrors = new StringBuffer();
     private WebDriver driver;
@@ -39,12 +52,12 @@ public class WebDriverWithHelperTest implements SauceOnDemandSessionIdProvider, 
     /**
      * Creates a new {@link org.openqa.selenium.remote.RemoteWebDriver} instance to be used to run WebDriver tests using Sauce.
      *
-     * @param username the Sauce username
-     * @param key the Sauce access key
-     * @param os the operating system to be used
-     * @param browser the name of the browser to be used
+     * @param username       the Sauce username
+     * @param key            the Sauce access key
+     * @param os             the operating system to be used
+     * @param browser        the name of the browser to be used
      * @param browserVersion the version of the browser to be used
-     * @param method the test method being executed
+     * @param method         the test method being executed
      * @throws Exception thrown if any errors occur in the creation of the WebDriver instance
      */
     @Parameters({"username", "key", "os", "browser", "browserVersion"})
@@ -57,9 +70,9 @@ public class WebDriverWithHelperTest implements SauceOnDemandSessionIdProvider, 
                       Method method) throws Exception {
 
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(key)) {
-           authentication = new SauceOnDemandAuthentication(username, key);
+            authentication = new SauceOnDemandAuthentication(username, key);
         } else {
-           authentication = new SauceOnDemandAuthentication("ivolf", "90e3bb89-c21d-4885-85cf-f25494db06ff");
+            authentication = new SauceOnDemandAuthentication("ivolf", "90e3bb89-c21d-4885-85cf-f25494db06ff");
         }
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -70,15 +83,19 @@ public class WebDriverWithHelperTest implements SauceOnDemandSessionIdProvider, 
         this.driver = new RemoteWebDriver(
                 new URL("http://" + authentication.getUsername() + ":" + authentication.getAccessKey() + "@ondemand.saucelabs.com:80/wd/hub"),
                 capabilities);
+
+        SpectoryPage = PageFactory.initElements(driver, spectoryPage.class);
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
     public String getSessionId() {
-        SessionId sessionId = ((RemoteWebDriver)driver).getSessionId();
+        SessionId sessionId = ((RemoteWebDriver) driver).getSessionId();
         return (sessionId == null) ? null : sessionId.toString();
     }
 
@@ -88,17 +105,141 @@ public class WebDriverWithHelperTest implements SauceOnDemandSessionIdProvider, 
         assertEquals(driver.getTitle(), "Amazon.com: Online Shopping for Electronics, Apparel, Computers, Books, DVDs & more");
     }
 
-    @Test
-    public void registerTest() throws Exception {
+    @Test(groups = {"positive"}, description = "If fields are filled. Message sent")
+    public void FillFields() {
+        try {
+            SpectoryPage
+                    .clickToAnchor()
+                    .fillName(name)
+                    .fillemailAddress(eAddress)        //RequiredFields
+                    .fillphoneNumber(pNumber)          //RequiredFields
+                    .filltellAboutProject(tAboutProject)
+                    .clickSentButton();
 
-        // ERROR: Caught exception [Error: locator strategy either id or name must be specified explicitly.]
+            Assert.assertTrue(SpectoryPage.CheckConfirmLabel(), "Confirm Label not appeared");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
-    @Test
-    public void testLoginSuccsess () throws Exception {
 
+    @Test(groups = {"positive"}, description = "If fields are filled. Message sent")
+    public void FillRequiredFields() {
+        try {
+            SpectoryPage
+                    .clickToAnchor()
 
+                    .fillemailAddress(eAddress)     //RequiredFields
+                    .fillphoneNumber(pNumber)       //RequiredFields
+                    .clickSentButton();
+
+            Assert.assertTrue(SpectoryPage.CheckConfirmLabel(), "Confirm Label not appeared");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
+
+
+    @Test(groups = {"negative"}, description = "If fields are empty. Message not be sent")
+    public void EmptyFields() {
+        try {
+            SpectoryPage
+                    .clickToAnchor()
+                    .clickSentButton();
+
+            Assert.assertTrue(!SpectoryPage.CheckConfirmLabel(), "Confirm Label not appeared");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test(groups = {"negative"}, description = "If one of required fields are empty. Message not be sent")
+    public void fillJustPhoneNumberField() {
+        try {
+            SpectoryPage
+                    .clickToAnchor()
+                    .fillphoneNumber(pNumber) //RequiredFields
+                    .clickSentButton();
+
+            Assert.assertTrue(!SpectoryPage.CheckConfirmLabel(), "Confirm Label not appeared");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test(groups = {"negative"}, description = "If one of required fields are empty. Message not be sent")
+    public void fillJustemailAddress() {
+        try {
+            SpectoryPage
+                    .clickToAnchor()
+                    .fillemailAddress(eAddress)         //RequiredFields
+                    .clickSentButton();
+
+            Assert.assertTrue(!SpectoryPage.CheckConfirmLabel(), "Confirm Label not appeared");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test(groups = {"negative"}, description = "If fields are empty. Message not be sent")
+    public void FillRequiredFieldsIncorrectly() {
+        try {
+            SpectoryPage
+                    .clickToAnchor()
+                    .fillemailAddress(eAddress_false)   //RequiredFields
+                    .fillphoneNumber(pNumber_false)     //RequiredFields
+                    .clickSentButton();
+
+            Assert.assertTrue(!SpectoryPage.CheckConfirmLabel(), "Confirm Label not appeared");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test(groups = {"negative"}, description = "If one of field is incorrectly. Message not be sent")
+    public void FillRequiredFieldsIncorrectlyAddress() {
+        try {
+            SpectoryPage
+                    .clickToAnchor()
+                    .fillemailAddress(eAddress_false)   //RequiredFields
+                    .fillphoneNumber(pNumber)           //RequiredFields
+                    .clickSentButton();
+
+            Assert.assertTrue(!SpectoryPage.CheckConfirmLabel(), "Confirm Label not appeared");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test(groups = {"negative"}, description = "If one of field is incorrectly. Message not be sent")
+    public void FillRequiredFieldsIncorrectlyPnumber() {
+        try {
+            SpectoryPage
+                    .clickToAnchor()
+                    .fillemailAddress(eAddress)         //RequiredFields
+                    .fillphoneNumber(pNumber_false)     //RequiredFields
+                    .clickSentButton();
+
+            Assert.assertTrue(!SpectoryPage.CheckConfirmLabel(), "Confirm Label not appeared");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Closes the WebDriver instance.
      *
@@ -111,6 +252,7 @@ public class WebDriverWithHelperTest implements SauceOnDemandSessionIdProvider, 
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -142,3 +284,4 @@ public class WebDriverWithHelperTest implements SauceOnDemandSessionIdProvider, 
         }
     }
 }
+
