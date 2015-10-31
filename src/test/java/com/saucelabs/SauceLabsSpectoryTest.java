@@ -61,7 +61,7 @@ public class SauceLabsSpectoryTest implements SauceOnDemandSessionIdProvider, Sa
      * @throws Exception thrown if any errors occur in the creation of the WebDriver instance
      */
     @Parameters({"username", "key", "os", "browser", "browserVersion"})
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setUp(@Optional("ivolf") String username,
                       @Optional("90e3bb89-c21d-4885-85cf-f25494db06ff") String key,
                       @Optional("Windows 8.1") String os,
@@ -86,6 +86,7 @@ public class SauceLabsSpectoryTest implements SauceOnDemandSessionIdProvider, Sa
 
         SpectoryPage = PageFactory.initElements(driver, spectoryPage.class);
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.get("http://spectory-web.herokuapp.com/en");
     }
 
     /**
@@ -108,6 +109,7 @@ public class SauceLabsSpectoryTest implements SauceOnDemandSessionIdProvider, Sa
     @Test(groups = {"positive"}, description = "If fields are filled. Message sent")
     public void FillFields() {
         try {
+
             SpectoryPage
                     .clickToAnchor()
                     .fillName(name)
