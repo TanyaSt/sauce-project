@@ -33,7 +33,7 @@ import static org.testng.Assert.assertEquals;
  * @author Ross Rowe
  */
 @Listeners({SauceOnDemandTestListener.class})
-public class WebDriverWithHelperTest implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
+public class SauceLabsSpectoryTest implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 
     //for positive
     public static String name = "User1";
