@@ -52,11 +52,10 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.webbitserver:webbit:0.4.15" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: io.netty:netty:3.5.5.Final" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: commons-lang:commons-lang:2.6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.saucelabs:sauce_testng:2.1.11" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: com.saucelabs:sauce_java_common:2.1.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.saucelabs:sauce_testng:2.1.20" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.saucelabs:sauce_java_common:2.1.20" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.googlecode.json-simple:json-simple:1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.saucelabs:saucerest:1.0.22" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.json:json:20090211" level="project" />
   </component>
-  <component name="POM File Configuration" pomFile="" />
 </module>
